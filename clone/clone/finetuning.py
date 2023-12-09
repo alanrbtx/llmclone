@@ -18,8 +18,6 @@ from datasets import load_dataset, Dataset
 from .clone_model import LLMClone
 
 def train_clone(model: LLMClone, dataset: Dataset):
-
-    dataset = load_dataset("iamtarun/python_code_instructions_18k_alpaca")
     dataset = dataset.map(lambda example: model.tokenizer(example["prompt"], max_length=256, truncation=True), batched=True)
     dataset = dataset["train"].train_test_split(0.1, 0.9)
     model.tokenizer.pad_token_id = model.tokenizer.eos_token_id
@@ -28,8 +26,8 @@ def train_clone(model: LLMClone, dataset: Dataset):
 
     training_args = TrainingArguments(
         output_dir="llama",
-        per_device_train_batch_size=4,
-        per_device_eval_batch_size=4,
+        per_device_train_batch_size=1,
+        per_device_eval_batch_size=1,
         gradient_accumulation_steps=4,
         max_steps=500,
         warmup_steps=2,
