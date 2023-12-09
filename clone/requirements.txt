@@ -1,0 +1,4 @@
+accelerate
+pytorch_lightning
+peft
+bitsandbytes
