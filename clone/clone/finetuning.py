@@ -18,11 +18,28 @@ from datasets import load_dataset, Dataset
 from .clone_model import LLMClone
 
 def train_clone(model: LLMClone, dataset: Dataset):
-    dataset = dataset.map(lambda example: model.tokenizer(example["prompt"], max_length=256, truncation=True), batched=True)
+    model = model.model
+    tokenizer = model.tokenizer
+
+    quant_model = prepare_model_for_kbit_training(model)
+    peft_config = LoraConfig(
+        task_type=TaskType.CAUSAL_LM,
+        r=16,
+        lora_alpha=32,
+        lora_dropout=0.05,
+        bias="none"
+    )
+
+
+    peft_model = get_peft_model(quant_model, peft_config)
+    peft_model.print_trainable_parameters()
+
+
+    dataset = dataset.map(lambda example: tokenizer(example["prompt"], max_length=256, truncation=True), batched=True)
     dataset = dataset["train"].train_test_split(0.1, 0.9)
     model.tokenizer.pad_token_id = model.tokenizer.eos_token_id
 
-    collator = DataCollatorForLanguageModeling(tokenizer=model.tokenizer, mlm=False)
+    collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
     training_args = TrainingArguments(
         output_dir="llama",
@@ -35,13 +52,12 @@ def train_clone(model: LLMClone, dataset: Dataset):
         save_steps=2000,
         learning_rate=2e-4,
         fp16=True,
-        #optim="paged_adamw_8bit",
+        optim="paged_adamw_8bit",
         ddp_find_unused_parameters=False,
-        push_to_hub=True
     )
 
     trainer = Trainer(
-        model=model.model,
+        model=peft_model,
         args=training_args,
         data_collator=collator,
         train_dataset=dataset["train"],
