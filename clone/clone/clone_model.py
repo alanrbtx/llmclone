@@ -56,9 +56,8 @@ class LLMClone(pl.LightningModule):
     def sample(
             self,
             prompt,
-            num_return_sequences=1,
             max_new_tokens=128,
-            max_length=1024
+            max_length=512
         ):
         
         input_ids = self.tokenizer(
@@ -71,7 +70,6 @@ class LLMClone(pl.LightningModule):
         tokens = self.model.generate(
             input_ids=input_ids,
             max_new_tokens=max_new_tokens,
-            num_beams=num_return_sequences
             
         )
 
