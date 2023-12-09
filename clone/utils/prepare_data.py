@@ -3,6 +3,7 @@ import pandas as pd
 
 def process_tg_data(
         file_path, 
+        user,
         output_format="dataset"):
     """
     Prepare data for clon training
@@ -18,9 +19,9 @@ def process_tg_data(
         for row in sample["messages"]:
             if row["text"] != '':
                 username = row['from']
-                if username != "Alan Barsag":
+                if username != user:
                     username = "User"
-                if username == "Alan Barsag":
+                if username == user:
                     username = "Clone"  
                 message = f"{username}: {row['text']}"
 
