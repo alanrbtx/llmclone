@@ -46,7 +46,7 @@ def train_clone(clone_model: LLMClone, dataset: Dataset):
         per_device_train_batch_size=2,
         per_device_eval_batch_size=2,
         gradient_accumulation_steps=4,
-        max_steps=50,
+        max_steps=200,
         warmup_steps=2,
         logging_steps=10,
         save_steps=2000,
