@@ -17,9 +17,9 @@ from peft import (
 from datasets import load_dataset, Dataset
 from .clone_model import LLMClone
 
-def train_clone(model: LLMClone, dataset: Dataset):
-    model = model.model
-    tokenizer = model.tokenizer
+def train_clone(clone_model: LLMClone, dataset: Dataset):
+    tokenizer = clone_model.tokenizer
+    model = clone_model.model
 
     quant_model = prepare_model_for_kbit_training(model)
     peft_config = LoraConfig(
