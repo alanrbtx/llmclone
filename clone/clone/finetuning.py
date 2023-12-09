@@ -67,4 +67,4 @@ def train_clone(clone_model: LLMClone, dataset: Dataset):
     trainer.train()
 
 
-    model.save_pretrained("clone_peft")
+    peft_model.save_pretrained("clone_peft")
