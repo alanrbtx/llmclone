@@ -36,7 +36,7 @@ def train_clone(clone_model: LLMClone, dataset: Dataset):
 
 
     dataset = dataset.map(lambda example: tokenizer(example["prompt"], max_length=256, truncation=True), batched=True)
-    dataset = dataset["train"].train_test_split(0.1, 0.9)
+    dataset = dataset.train_test_split(0.1, 0.9)
     model.tokenizer.pad_token_id = model.tokenizer.eos_token_id
 
     collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
